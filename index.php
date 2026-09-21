@@ -40,3 +40,41 @@ $brinquedos = mysqli_query($conexao, "SELECT * FROM brinquedos");
             <br>
             <button type="submit">Cadastrar</button>
         </form>
+
+         <div>
+            <h2>Brinquedos Cadastrados</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Faixa Etária</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                </tr>
+                <?php while ($brinquedo = mysqli_fetch_assoc($brinquedos)) { ?>
+                    <tr>
+                        <td><?php echo $brinquedo["id"] ?></td>
+                        <td><?php echo $brinquedo["nome"] ?></td>
+                        <td><?php echo $brinquedo["categoria"] ?></td>
+                        <td><?php echo $brinquedo["faixa_etaria"] ?></td>
+                        <td><?php echo $brinquedo["preco"] ?></td>
+                        <td><?php echo $brinquedo["quantidade"] ?></td>
+                        <td>
+                            <a href="public/editar.php?id=<?php echo $brinquedo["id"] ?>">Editar</a>
+                            <a href="public/excluir.php?id=<?php echo $brinquedo["id"] ?>">Excluir</a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </table>
+        </div>
+
+    </main>
+    <footer>
+
+    </footer>
+
+
+</body>
+
+</html>
