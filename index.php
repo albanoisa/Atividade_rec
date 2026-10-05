@@ -1,8 +1,12 @@
 <?php
+require_once "infra/conexao.php";
 
-include "infra/conexao.php";
-$brinquedos = mysqli_query($conexao, "SELECT * FROM brinquedos");
+$sql = "SELECT * FROM brinquedos ORDER BY id DESC";
+$resultado = mysqli_query($conexao, $sql);
 
+if (!$resultado) {
+    die("Erro ao listar os brinquedos.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,70 +15,70 @@ $brinquedos = mysqli_query($conexao, "SELECT * FROM brinquedos");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD - Brinquedos</title>
-    <link rel="stylesheet" href="style/styles.css">
+    <title>Gestão de Brinquedos</title>
 </head>
 
-
 <body>
-    <header>
-        <h1>CRUD - Brinquedos</h1>
-    </header>
-    <main>
-        <h2>Adicione um novo brinquedo!</h2>
-        <form action="public/cadastrar.php" method="POST">
-            <label for="nome">Nome:</label>
-            <input type="text" name="nome">
-            <br>
-            <label for="categoria">Categoria:</label>
-            <input type="text" name="categoria">
-            <br>
-            <label for="faixa_etaria">Faixa Etária:</label>
-            <input type="number" name="faixa_etaria">
-            <br>
-            <label for="preco">Preço:</label>
-            <input type="number" name="preco" step="0.01">
-            <br>
-            <label for="quantidade">Quantidade em estoque:</label>
-            <input type="number" name="quantidade">
-            <br>
-            <button type="submit">Cadastrar</button>
-        </form>
+    <h1>GESTÃO DE BRINQUEDOS</h1>
+    <h2>Cadastrar Brinquedo</h2>
 
-         <div>
-            <h2>Brinquedos Cadastrados</h2>
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Categoria</th>
-                    <th>Faixa Etária</th>
-                    <th>Preço</th>
-                    <th>Quantidade</th>
-                </tr>
-                <?php while ($brinquedo = mysqli_fetch_assoc($brinquedos)) { ?>
-                    <tr>
-                        <td><?php echo $brinquedo["id"] ?></td>
-                        <td><?php echo $brinquedo["nome"] ?></td>
-                        <td><?php echo $brinquedo["categoria"] ?></td>
-                        <td><?php echo $brinquedo["faixa_etaria"] ?></td>
-                        <td><?php echo $brinquedo["preco"] ?></td>
-                        <td><?php echo $brinquedo["quantidade"] ?></td>
-                        <td>
-                            <a href="public/editar.php?id=<?php echo $brinquedo["id"] ?>">Editar</a>
-                            <a href="public/excluir.php?id=<?php echo $brinquedo["id"] ?>">Excluir</a>
-                        </td>
-                    </tr>
-                <?php } ?>
-            </table>
-        </div>
+    <form action="public/cadastrar.php" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
 
-    </main>
-    <footer>
+        <br><br>
 
-    </footer>
+        <label for="categoria">Categoria:</label>
+        <input type="text" id="categoria" name="categoria" required>
 
+        <br><br>
 
+        <label for="faixa_etaria">Faixa etária:</label>
+        <input type="text" id="faixa_etaria" name="faixa_etaria" required>
+
+        <br><br>
+
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" name="preco" step="0.01" min="0" required>
+
+        <br><br>
+
+        <label for="quantidade_estoque">Quantidade estoque:</label>
+        <input type="number" id="quantidade_estoque" name="quantidade_estoque" min="0" required>
+
+        <br><br>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Brinquedos Cadastrados</h2>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Faixa etária</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Ações</th>
+        </tr>
+
+        <?php while ($brinquedo = mysqli_fetch_assoc($resultado)) { ?>
+            <tr>
+                <td><?= $brinquedo["id"] ?></td>
+                <td><?= htmlspecialchars($brinquedo["nome"]) ?></td>
+                <td><?= htmlspecialchars($brinquedo["categoria"]) ?></td>
+                <td><?= htmlspecialchars($brinquedo["faixa_etaria"]) ?></td>
+                <td>R$ <?= number_format($brinquedo["preco"], 2, ",", ".") ?></td>
+                <td><?= $brinquedo["quantidade_estoque"] ?></td>
+                <td>
+                    <a href="public/editar.php?id=<?= $brinquedo["id"] ?>">Editar</a>
+                    <a href="public/excluir.php?id=<?= $brinquedo["id"] ?>">Excluir</a>
+                </td>
+            </tr>
+        <?php } ?>
+    </table>
 </body>
 
 </html>
