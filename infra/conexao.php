@@ -1,14 +1,12 @@
 <?php
-
-$host = "localhost";
+$servidor = "localhost";
 $usuario = "root";
-$senha = "root";
-$banco = "loja_isabela";
+$senha = "";
+$banco = "brinquedos";
 
-$conexao = new mysqli($host, $usuario, $senha, $banco);
+$conexao = mysqli_connect($servidor, $usuario, $senha, $banco);
 
-if ($conexao->connect_error) {
-    die("Erro na conexão com o banco: " . $conexao->connect_error);
-};
-
-$conexao->set_charset("utf8mb4");
+if (!$conexao) {
+    die("Erro na conexão com o banco de dados: " . mysqli_connect_error());
+}
+?>
