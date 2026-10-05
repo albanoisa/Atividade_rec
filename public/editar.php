@@ -1,13 +1,31 @@
 <?php
+require_once "../infra/conexao.php";
 
-include "../infra/conexao.php";
+if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
+    die("Brinquedo não encontrado.");
+}
 
 $id = $_GET["id"];
-$sql = "SELECT * FROM brinquedos WHERE id = $id";
-$resultado = mysqli_query($conexao, $sql );
+$sql = "SELECT * FROM brinquedos WHERE id = ?";
+$stmt = mysqli_prepare($conexao, $sql);
 
-$brinquedo =mysqli_fetch_assoc($resultado);
+if (!$stmt) {
+    die("Erro ao consultar o brinquedo.");
+}
 
+mysqli_stmt_bind_param($stmt, "i", $id);
+
+if (!mysqli_stmt_execute($stmt)) {
+    die("Erro ao buscar o brinquedo.");
+}
+
+$resultado = mysqli_stmt_get_result($stmt);
+$brinquedo = mysqli_fetch_assoc($resultado);
+mysqli_stmt_close($stmt);
+
+if (!$brinquedo) {
+    die("Brinquedo não encontrado.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,40 +34,46 @@ $brinquedo =mysqli_fetch_assoc($resultado);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD - Brinquedos</title>
-    <link rel="stylesheet" href="style/styles.css">
+    <title>Editar brinquedo</title>
 </head>
 
 <body>
-    <header>
-        <h1>CRUD - Brinquedos</h1>
-    </header>
-    <main>
-        <h2>Editando o brinquedo <?php echo $brinquedo["nome"]?>!</h2>
-        <form action="atualizar.php" method="POST">
-            <input type="hidden" name="id" value="<?php echo $brinquedo["id"]?>">
-            <label for="nome">Nome:</label>
-            <input type="text" name="nome" value="<?php echo $brinquedo["nome"]?>">
-            <br>
-            <label for="categoria">Categoria:</label>
-            <input type="text" name="categoria" value="<?php echo $brinquedo["categoria"]?>">
-            <br>
-            <label for="faixa_etaria">Faixa Etária:</label>
-            <input type="text" name="faixa_etaria" value="<?php echo $brinquedo["faixa_etaria"]?>">
-            <br>
-            <label for="preco">Preço:</label>
-            <input type="number" name="preco" value="<?php echo $brinquedo["preco"]?>" step="0.01">
-            <br>
-            <label for="quantidade">Quantidade:</label>
-            <input type="number" name="quantidade" value="<?php echo $brinquedo["quantidade"]?>">
-            <br>
-            <button type="submit">Atualizar</button>
-        </form>
+    <h1>Editar brinquedo</h1>
 
-    </main>
-    <footer>
-    </footer>
+    <form action="atualizar.php" method="POST">
+        <input type="hidden" name="id" value="<?= $brinquedo["id"] ?>">
 
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($brinquedo["nome"]) ?>" required>
 
+        <br><br>
+
+        <label for="categoria">Categoria:</label>
+        <input type="text" id="categoria" name="categoria" value="<?= htmlspecialchars($brinquedo["categoria"]) ?>" required>
+
+        <br><br>
+
+        <label for="faixa_etaria">Faixa etária:</label>
+        <input type="text" id="faixa_etaria" name="faixa_etaria" value="<?= htmlspecialchars($brinquedo["faixa_etaria"]) ?>" required>
+        
+        <br><br>
+
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" name="preco" step="0.01" min="0" value="<?= $brinquedo["preco"] ?>" required>
+
+        <br><br>
+
+        <label for="quantidade_estoque">Quantidade em estoque:</label>
+        <input type="number" id="quantidade_estoque" name="quantidade_estoque" min="0" value="<?= $brinquedo["quantidade_estoque"] ?>" required>
+
+        <br><br>
+
+        <button type="submit">Atualizar</button>
+    </form>
+
+    <br>
+
+    <a href="../index.php">Voltar</a>
 </body>
+
 </html>
