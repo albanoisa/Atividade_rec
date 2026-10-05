@@ -19,8 +19,10 @@ if (!$resultado) {
 </head>
 
 <body>
-    <h1>GESTÃO DE BRINQUEDOS</h1>
-    <h2>Cadastrar Brinquedo</h2>
+    <div class="main-container" style="background-color: rgb(250, 246, 238);">
+    <h1 style="color: #000b4b;">GESTÃO DE BRINQUEDOS</h1>
+    </nav>
+    <h2 style="color: #000b4b;">Cadastrar Brinquedo</h2>
 
     <form action="public/cadastrar.php" method="POST">
         <label for="nome">Nome:</label>
@@ -51,7 +53,7 @@ if (!$resultado) {
         <button type="submit">Cadastrar</button>
     </form>
 
-    <h2>Brinquedos Cadastrados</h2>
+    <h2 style="color: #000b4b;">Brinquedos Cadastrados</h2>
 
     <table border="1">
         <tr>
@@ -79,6 +81,7 @@ if (!$resultado) {
             </tr>
         <?php } ?>
     </table>
+    </div>
 </body>
 
 </html>
