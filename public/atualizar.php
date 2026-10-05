@@ -1,20 +1,34 @@
 <?php
+require_once "../infra/conexao.php";
 
-include "../infra/conexao.php";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id = $_POST["id"];
+    $nome = trim($_POST["nome"]);
+    $categoria = trim($_POST["categoria"]);
+    $faixa_etaria = trim($_POST["faixa_etaria"]);
+    $preco = $_POST["preco"];
+    $quantidade_estoque = $_POST["quantidade_estoque"];
+    
+    if (!is_numeric($id) || empty($nome) || empty($categoria) || empty($faixa_etaria) || !is_numeric($preco) || $preco < 0 || !is_numeric($quantidade_estoque) || $quantidade_estoque < 0) {
+        die("Preencha os dados corretamente.");
+    }
 
-$id = $_POST["id"];
-$nome = $_POST["nome"];
-$categoria = $_POST["categoria"];
-$faixa_etaria = $_POST["faixa_etaria"];
-$preco = $_POST["preco"];
-$quantidade = $_POST["quantidade"];
+    $sql = "UPDATE brinquedos SET nome = ?, categoria = ?, faixa_etaria = ?, preco = ?, quantidade_estoque = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conexao, $sql);
 
-$sql = "UPDATE brinquedos SET nome = ?, categoria = ?, faixa_etaria = ?, preco = ?, quantidade = ? WHERE id = ?";
+    if (!$stmt) {
+        die("Erro ao preparar a atualização.");
+    }
 
-$stmt = mysqli_prepare($conexao, $sql);
+    mysqli_stmt_bind_param($stmt, "sssdii", $nome, $categoria, $faixa_etaria, $preco, $quantidade_estoque, $id);
 
-mysqli_stmt_bind_param($stmt, "ssssi", $nome, $categoria, $faixa_etaria, $preco, $quantidade, $id);
+    if (!mysqli_stmt_execute($stmt)) {
+        die("Erro ao atualizar o brinquedo.");
+    }
 
-mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
-header("Location: ../index.php");
+    header("Location: ../index.php");
+    exit;
+}
+?>
